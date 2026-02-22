@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Firas BenSlimane</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --border: #1f1f1f;
+      --border-light: #2a2a2a;
+      --text: #e8e8e8;
+      --muted: #555;
+      --accent: #d4f542;
+      --accent-dim: rgba(212, 245, 66, 0.08);
+      --font-mono: 'Geist Mono', monospace;
+      --font-serif: 'Instrument Serif', serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Noise texture overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.4;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      height: 52px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(10,10,10,0.85);
+      backdrop-filter: blur(12px);
+    }
+
+    .nav-logo {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text);
+      letter-spacing: 0.04em;
+      text-decoration: none;
+    }
+
+    .nav-logo span { color: var(--accent); }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    .nav-status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-bottom: 1px solid var(--border);
+      padding-top: 52px;
+    }
+
+    .hero-left {
+      padding: 5rem 3rem 5rem 3rem;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .hero-tag {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 3rem;
+    }
+
+    .hero-name {
+      font-family: var(--font-serif);
+      font-size: clamp(3.5rem, 6vw, 6rem);
+      font-weight: 400;
+      line-height: 0.95;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+
+    .hero-name em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-desc {
+      margin-top: 2.5rem;
+      max-width: 380px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 3rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      text-decoration: none;
+      border: 1px solid var(--border-light);
+      transition: all 0.2s;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #0a0a0a;
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+
+    .btn-primary:hover { background: #c8e83a; }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+    }
+
+    .btn-secondary:hover {
+      background: var(--surface);
+      border-color: var(--border-light);
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .meta-item {
+      display: flex;
+      gap: 1rem;
+      font-size: 11px;
+    }
+
+    .meta-label { color: var(--muted); min-width: 80px; }
+    .meta-value { color: var(--text); }
+
+    /* Hero right — grid of panels */
+    .hero-right {
+      display: grid;
+      grid-template-rows: 1fr 1fr;
+    }
+
+    .panel {
+      padding: 2.5rem;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel:last-child { border-bottom: none; }
+
+    .panel-label {
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+
+    .terminal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 1.2rem;
+      font-size: 12px;
+      line-height: 1.8;
+    }
+
+    .terminal .line { display: flex; gap: 0.5rem; }
+    .terminal .prompt { color: var(--accent); }
+    .terminal .cmd { color: var(--text); }
+    .terminal .out { color: var(--muted); padding-left: 1rem; }
+    .terminal .cursor {
+      display: inline-block;
+      width: 8px;
+      height: 14px;
+      background: var(--accent);
+      animation: blink 1s step-end infinite;
+      vertical-align: middle;
+      margin-left: 2px;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .stack-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .tag {
+      padding: 0.3rem 0.7rem;
+      border: 1px solid var(--border-light);
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.03em;
+      transition: all 0.2s;
+    }
+
+    .tag:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-dim);
+    }
+
+    .tag.accent {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-dim);
+    }
+
+    /* ─── SECTION ─── */
+    section {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-header {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-num {
+      padding: 1.5rem 2rem;
+      border-right: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
+    .section-title {
+      padding: 1.5rem 2rem;
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      font-weight: 400;
+      font-style: italic;
+      color: var(--text);
+    }
+
+    /* ─── PROJECTS ─── */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .project-card {
+      padding: 2rem;
+      border-right: 1px solid var(--border);
+      transition: background 0.2s;
+      cursor: pointer;
+    }
+
+    .project-card:last-child { border-right: none; }
+    .project-card:hover { background: var(--surface); }
+
+    .project-card:hover .project-arrow { transform: translate(3px, -3px); }
+
+    .project-num {
+      font-size: 10px;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.08em;
+    }
+
+    .project-name {
+      font-family: var(--font-serif);
+      font-size: 1.3rem;
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+
+    .project-arrow {
+      font-size: 1rem;
+      color: var(--accent);
+      transition: transform 0.2s;
+      margin-left: 0.5rem;
+    }
+
+    .project-desc {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    /* ─── ABOUT ─── */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .about-text {
+      padding: 3rem;
+      border-right: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .about-text p + p { margin-top: 1rem; }
+
+    .about-text strong { color: var(--text); font-weight: 500; }
+
+    .about-stats {
+      padding: 3rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      align-content: start;
+    }
+
+    .stat-block {}
+
+    .stat-num {
+      font-family: var(--font-serif);
+      font-size: 2.5rem;
+      font-style: italic;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 0.3rem;
+      letter-spacing: 0.04em;
+    }
+
+    /* ─── CONTACT ─── */
+    .contact-row {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+    }
+
+    .contact-side {
+      padding: 3rem 2rem;
+      border-right: 1px solid var(--border);
+    }
+
+    .contact-main {
+      padding: 3rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .contact-email {
+      font-family: var(--font-serif);
+      font-size: clamp(1.5rem, 3vw, 2.5rem);
+      font-style: italic;
+      color: var(--text);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .contact-email:hover { color: var(--accent); }
+
+    /* ─── FOOTER ─── */
+    footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 2rem;
+      border-top: 1px solid var(--border);
+    }
+
+    footer span { font-size: 11px; color: var(--muted); }
+
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .footer-links a {
+      font-size: 11px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--text); }
+
+    /* ─── ANIMATIONS ─── */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.6s ease forwards;
+    }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+    .delay-4 { animation-delay: 0.4s; }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; }
+      .hero-left { border-right: none; border-bottom: 1px solid var(--border); }
+      .hero-right { display: none; }
+      .projects-grid { grid-template-columns: 1fr; }
+      .project-card { border-right: none; border-bottom: 1px solid var(--border); }
+      .about-grid { grid-template-columns: 1fr; }
+      .about-text { border-right: none; border-bottom: 1px solid var(--border); }
+      .section-header { grid-template-columns: 80px 1fr; }
+      .contact-row { grid-template-columns: 1fr; }
+      .contact-side { border-right: none; border-bottom: 1px solid var(--border); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="/" class="nav-logo">firas<span>.</span>me</a>
+    <ul class="nav-links">
+      <li><a href="#work">Work</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="nav-status">
+      <div class="status-dot"></div>
+      Available for work
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-left">
+      <div>
+        <p class="hero-tag fade-up">Portfolio — 2026</p>
+        <h1 class="hero-name fade-up delay-1">
+          Firas<br /><em>BenSlimane</em>
+        </h1>
+        <p class="hero-desc fade-up delay-2">
+          Software engineer building thoughtful digital products.
+          Focused on clean architecture, great developer experience,
+          and interfaces that actually feel good to use.
+        </p>
+        <div class="hero-actions fade-up delay-3">
+          <a href="#work" class="btn btn-primary">View work →</a>
+          <a href="#contact" class="btn btn-secondary">Get in touch</a>
+        </div>
+      </div>
+      <div class="hero-meta fade-up delay-4">
+        <div class="meta-item">
+          <span class="meta-label">Based in</span>
+          <span class="meta-value">Tunis, TN</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Role</span>
+          <span class="meta-value">Full-stack Engineer</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Status</span>
+          <span class="meta-value" style="color: var(--accent)">Open to opportunities</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="panel">
+        <p class="panel-label">Terminal</p>
+        <div class="terminal">
+          <div class="line"><span class="prompt">~$</span><span class="cmd">whoami</span></div>
+          <div class="line"><span class="out">firas.benslimane — engineer</span></div>
+          <div class="line" style="margin-top:0.5rem"><span class="prompt">~$</span><span class="cmd">cat skills.txt</span></div>
+          <div class="line"><span class="out">TypeScript, React, Node.js</span></div>
+          <div class="line"><span class="out">Next.js, PostgreSQL, Docker</span></div>
+          <div class="line" style="margin-top:0.5rem"><span class="prompt">~$</span><span class="cmd">echo $GOAL</span></div>
+          <div class="line"><span class="out">ship great software<span class="cursor"></span></span></div>
+        </div>
+      </div>
+      <div class="panel">
+        <p class="panel-label">Stack</p>
+        <div class="stack-grid">
+          <span class="tag accent">TypeScript</span>
+          <span class="tag">React</span>
+          <span class="tag">Next.js</span>
+          <span class="tag">Node.js</span>
+          <span class="tag">PostgreSQL</span>
+          <span class="tag">Docker</span>
+          <span class="tag">Tailwind</span>
+          <span class="tag">Git</span>
+          <span class="tag">REST</span>
+          <span class="tag">GraphQL</span>
+          <span class="tag">Linux</span>
+          <span class="tag">CI/CD</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WORK -->
+  <section id="work">
+    <div class="section-header">
+      <div class="section-num">01 / Work</div>
+      <div class="section-title">Selected projects</div>
+    </div>
+    <div class="projects-grid">
+      <div class="project-card">
+        <div class="project-num">001</div>
+        <div class="project-name">
+          Project Alpha
+          <span class="project-arrow">↗</span>
+        </div>
+        <p class="project-desc">A full-stack web application built with Next.js and PostgreSQL. Features real-time updates, authentication, and a clean admin dashboard.</p>
+        <div class="project-tags">
+          <span class="tag">Next.js</span>
+          <span class="tag">PostgreSQL</span>
+          <span class="tag">Vercel</span>
+        </div>
+      </div>
+      <div class="project-card">
+        <div class="project-num">002</div>
+        <div class="project-name">
+          Project Beta
+          <span class="project-arrow">↗</span>
+        </div>
+        <p class="project-desc">REST API service handling high-throughput data processing. Built with Node.js, optimized for performance and deployed via Docker.</p>
+        <div class="project-tags">
+          <span class="tag">Node.js</span>
+          <span class="tag">Docker</span>
+          <span class="tag">Redis</span>
+        </div>
+      </div>
+      <div class="project-card">
+        <div class="project-num">003</div>
+        <div class="project-name">
+          Project Gamma
+          <span class="project-arrow">↗</span>
+        </div>
+        <p class="project-desc">Open source CLI tool for automating repetitive developer workflows. Over 500 stars on GitHub.</p>
+        <div class="project-tags">
+          <span class="tag">TypeScript</span>
+          <span class="tag">CLI</span>
+          <span class="tag">OSS</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="section-header">
+      <div class="section-num">02 / About</div>
+      <div class="section-title">A bit about me</div>
+    </div>
+    <div class="about-grid">
+      <div class="about-text">
+        <p>I'm a software engineer based in <strong>Tunis, Tunisia</strong>, currently studying at ESPRIT. I build full-stack applications with a focus on clean code, scalability, and developer experience.</p>
+        <p>My work spans from <strong>frontend interfaces</strong> to <strong>backend systems</strong> — I care deeply about the whole stack and how each layer interacts with the others.</p>
+        <p>When I'm not coding, I'm exploring new tools, contributing to open source, or thinking about how to make complex things feel simple.</p>
+      </div>
+      <div class="about-stats">
+        <div class="stat-block">
+          <div class="stat-num">3+</div>
+          <div class="stat-label">Years coding</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-num">12+</div>
+          <div class="stat-label">Projects shipped</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-num">5+</div>
+          <div class="stat-label">Technologies mastered</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-num">∞</div>
+          <div class="stat-label">Curiosity</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="section-header">
+      <div class="section-num">03 / Contact</div>
+      <div class="section-title">Let's work together</div>
+    </div>
+    <div class="contact-row">
+      <div class="contact-side">
+        <p style="font-size:11px; color: var(--muted); line-height:1.7;">
+          Open to full-time roles,<br/>
+          freelance projects,<br/>
+          and collaborations.
+        </p>
+      </div>
+      <div class="contact-main">
+        <a href="mailto:firas.benslimen@esprit.tn" class="contact-email">
+          firas.benslimen@esprit.tn
+        </a>
+        <a href="https://github.com/FyrasBenSlimane" class="btn btn-secondary" target="_blank">GitHub ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span>© 2026 Firas BenSlimane</span>
+    <div class="footer-links">
+      <a href="https://github.com/FyrasBenSlimane" target="_blank">GitHub</a>
+      <a href="https://linkedin.com" target="_blank">LinkedIn</a>
+      <a href="mailto:firas.benslimen@esprit.tn">Email</a>
+    </div>
+    <span>firasbenslimane.me</span>
+  </footer>
+
+</body>
+</html>
